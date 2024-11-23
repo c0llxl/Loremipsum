@@ -7,10 +7,18 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Validator;
 
-
 class RoleController extends Controller
 {
-    // list
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    //     $this->middleware('permission:view-roles')->only(['index']);
+    //     $this->middleware('permission:create-roles')->only(['create', 'store']);
+    //     $this->middleware('permission:edit-roles')->only(['edit', 'update']);
+    //     $this->middleware('permission:delete-roles')->only(['destroy']);
+    // }
+
+    // list 
     public function index()
     {
         $roles = Role::orderBy('name', 'asc')->paginate(10);
