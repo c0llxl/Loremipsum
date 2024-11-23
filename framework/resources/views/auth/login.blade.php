@@ -1,47 +1,88 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
+    <style>
+        body {
+            background-color: #2148C0;
+            font-family: 'Arial', sans-serif;
+        }
+        .background-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://placehold.co/1920x1080/2148C0/2148C0') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="background-pattern"></div>
+    <div class="text-center">
+        <div class="mb-8 ml-12">
+            <span class="iconify" data-icon="hugeicons:corn" style="font-size: 150px; color: white;"></span>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <!-- Notification Container -->
+        @if($errors->any())
+        <div id="notification" class="bg-red-500 text-white p-4 rounded mb-4">
+            Invalid email or password!
         </div>
+        @endif
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+        <form class="space-y-4" action="{{ route('login') }}" method="POST">
+            @csrf
+            
+            <!-- Email Input -->
+            <div class="relative">
+                <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-black"></i>
+                <input id="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                    class="w-full pl-10 pr-4 py-2 border border-white rounded bg-transparent text-white placeholder-white focus:outline-none"
+                    placeholder="EMAIL" type="email" />
+                @error('email')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+            <!-- Password Input -->
+            <div class="relative">
+                <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-black"></i>
+                <input id="password" name="password" required autocomplete="current-password"
+                    class="w-full pl-10 pr-4 py-2 border border-white rounded bg-transparent text-white placeholder-white focus:outline-none"
+                    placeholder="PASSWORD" type="password" />
+                @error('password')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+            <!-- Login Button -->
+            <button class="w-full py-2 bg-white text-blue-900 rounded" type="submit">LOGIN</button>
+        </form>
+        
+        <!-- Register Link -->
+        @if (Route::has('password.request'))
+            <a class="block mt-4 text-white" href="{{ route('register') }}">Register</a>
+        @endif
+    </div>
+
+    <!-- JavaScript for Notification -->
+    <script>
+        // Automatically hide notification after 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const notification = document.getElementById('notification');
+            if (notification) {
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
