@@ -9,14 +9,14 @@ use Validator;
 
 class UserController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware('permission:view-users')->only(['index', 'show']);
-    //     $this->middleware('permission:create-users')->only(['create', 'store']);
-    //     $this->middleware('permission:edit-users')->only(['edit', 'update']);
-    //     $this->middleware('permission:delete-users')->only(['destroy']);
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:view-users')->only(['index', 'show']);
+        $this->middleware('permission:create-users')->only(['create', 'store']);
+        $this->middleware('permission:edit-users')->only(['edit', 'update']);
+        $this->middleware('permission:delete-users')->only(['destroy']);
+    }
 
     /**
      * Display a listing of the resource.
@@ -40,8 +40,37 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'roles' => ['nullable', 'array'],
+            'roles.*' => ['exists:roles,id'],
+            'img' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Validasi gambar
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->route('users.create')->withErrors($validator)->withInput();
+        }
+    
+        $data = $request->only(['name', 'email']);
+        $data['password'] = bcrypt($request->password);
+    
+        if ($request->hasFile('img')) {
+            $fileName = time() . '.' . $request->img->extension();
+            $request->img->storeAs('public/images', $fileName);
+            $data['img'] = $fileName;
+        }
+    
+        $user = User::create($data);
+    
+        // Tambahkan roles
+        $roles = Role::whereIn('id', $request->input('roles', []))->get();
+        $user->assignRole($roles);
+    
+        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
+    
 
     /**
      * Display the specified resource.
@@ -72,49 +101,44 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         
-        \Log::info('Update User Request', [
-            'user_id' => $id,
-            'request_data' => $request->all()
-        ]);
-    
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $id],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['exists:roles,id'],
+            'img' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Validasi untuk gambar
         ]);
     
         if ($validator->fails()) {
             return redirect()->route('users.edit', $id)->withErrors($validator)->withInput();
         }
     
+        // Update data user
         $user->name = $request->name;
         $user->email = $request->email;
+    
+        if ($request->hasFile('img')) {
+            // Hapus gambar lama jika ada
+            if ($user->img && \Storage::exists('public/images/' . $user->img)) {
+                \Storage::delete('public/images/' . $user->img);
+            }
+    
+            // Simpan gambar baru
+            $fileName = time() . '.' . $request->img->extension();
+            $request->img->storeAs('public/images', $fileName);
+            $user->img = $fileName;
+        }
+    
         $user->save();
     
-        // Get roles from request, defaulting to an empty array if not present
+        // Sinkronisasi roles
         $roleIds = $request->input('roles', []);
-    
-        \Log::info('Before syncRoles', [
-            'user_id' => $user->id,
-            'current_roles' => $user->roles->pluck('id')->toArray(),
-            'roles_to_sync' => $roleIds
-        ]);
-    
-        // Sync roles using IDs
         $roles = Role::whereIn('id', $roleIds)->get();
         $user->syncRoles($roles);
     
-        // Refresh user model to get updated roles
-        $user->refresh();
-    
-        \Log::info('After syncRoles', [
-            'user_id' => $user->id,
-            'new_roles' => $user->roles->pluck('id')->toArray()
-        ]);
-    
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
-    }    /**
+    }
+      /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
@@ -128,4 +152,5 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to delete user']);
         }
     }
+    
 }

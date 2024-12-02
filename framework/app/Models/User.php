@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'img',
     ];
 
     /**
@@ -43,4 +44,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // Dalam Model User
+    public function getProfileImageAttribute()
+    {
+        return $this->img 
+            ? asset('storage/images/' . $this->img)
+            : 'https://storage.googleapis.com/a1aa/image/wIMOoR4nSzrfUyBGmC01cY15ADuZAdsTOC0P4WGf3RGTAx2TA.jpg';
+    }
 }

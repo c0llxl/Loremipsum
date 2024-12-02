@@ -1,25 +1,30 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+@extends('layouts.app')
+
+@section('title', 'Create Stock')
+
+@section('content')
+<div class="min-h-screen bg-white p-8">
+    <div class="container mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">
                 Create Stock
             </h2>
-            <a href="{{ route('stock.index') }}" class="bg-slate-700 rounded-md text-white px-4 py-2">Back to List</a>
+            <a href="{{ route('stock.index') }}" 
+               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition duration-300 ease-in-out shadow-md">
+                Back to List
+            </a>
         </div>
-    </x-slot>
 
+        <div class="bg-white shadow-2xl rounded-2xl overflow-hidden">
+            <div class="p-8">
+                <form action="{{ route('stock.store') }}" method="POST" class="space-y-8">
+                    @csrf
 
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <form action="{{ route('stock.store') }}" method="POST" class="space-y-6">
-                        @csrf
+                    <div class="grid md:grid-cols-2 gap-6">
                         <div>
-                            <label for="product_id" class="text-lg font-medium">Product</label>
-                            <select name="product_id" id="product_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
+                            <label for="product_id" class="block text-sm font-semibold text-gray-700 mb-2">Product</label>
+                            <select name="product_id" id="product_id" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
                                 <option value="">Select Product</option>
                                 @foreach($products as $product)
                                     <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
@@ -28,71 +33,82 @@
                                 @endforeach
                             </select>
                             @error('product_id')
-                                <p class="text-red-400 font-medium mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="type" class="text-lg font-medium">Type</label>
-                            <select name="type" id="type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
+                            <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">Type</label>
+                            <select name="type" id="type" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
                                 <option value="">Select Type</option>
                                 <option value="in" {{ old('type') == 'in' ? 'selected' : '' }}>In</option>
                                 <option value="out" {{ old('type') == 'out' ? 'selected' : '' }}>Out</option>
                             </select>
                             @error('type')
-                                <p class="text-red-400 font-medium mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
 
+                    <div class="grid md:grid-cols-2 gap-6">
                         <div>
-                            <label for="quantity" class="text-lg font-medium">Quantity</label>
-                            <input name="quantity" id="quantity" value="{{ old('quantity') }}" type="number" min="1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
+                            <label for="quantity" class="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
+                            <input name="quantity" id="quantity" value="{{ old('quantity') }}" type="number" min="1" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
                             @error('quantity')
-                                <p class="text-red-400 font-medium mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="source" class="text-lg font-medium">Source</label>
-                            <input name="source" id="source" value="{{ old('source') }}" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
+                            <label for="source" class="block text-sm font-semibold text-gray-700 mb-2">Source</label>
+                            <input name="source" id="source" value="{{ old('source') }}" type="text" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
                             @error('source')
-                                <p class="text-red-400 font-medium mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
 
+                    <div class="grid md:grid-cols-2 gap-6">
                         <div>
-                            <label for="destination" class="text-lg font-medium">Destination</label>
-                            <input name="destination" id="destination" value="{{ old('destination') }}" type="text" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
+                            <label for="destination" class="block text-sm font-semibold text-gray-700 mb-2">Destination</label>
+                            <input name="destination" id="destination" value="{{ old('destination') }}" type="text" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
                             @error('destination')
-                                <p class="text-red-400 font-medium mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="date" class="text-lg font-medium">Date</label>
-                            <input name="date" id="date" value="{{ old('date') }}" type="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
+                            <label for="date" class="block text-sm font-semibold text-gray-700 mb-2">Date</label>
+                            <input name="date" id="date" value="{{ old('date') }}" type="date" 
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
                             @error('date')
-                                <p class="text-red-400 font-medium mt-1">{{ $message }}</p>
+                                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
 
-                        <div>
-                            <label for="note" class="text-lg font-medium">Note</label>
-                            <textarea name="note" id="note" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">{{ old('note') }}</textarea>
-                            @error('note')
-                                <p class="text-red-400 font-medium mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div>
+                        <label for="note" class="block text-sm font-semibold text-gray-700 mb-2">Note</label>
+                        <textarea name="note" id="note" rows="4" 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">{{ old('note') }}</textarea>
+                        @error('note')
+                            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div>
-                            <button type="submit" class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500">
-                                Create Stock
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
+                    <div class="pt-4">
+                        <button type="submit" 
+                            class="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+                            Create Stock
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

@@ -1,41 +1,34 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            CREATE
-        </h2>
-        <a href="{{ route('permissions.index') }}" class="bg-slate-700 rounded-md text-white"></a>
-      </div>
-    </x-slot>
+@extends('layouts.app')
 
-
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <div class="mb-4 ">
-                        <a href="{{ route('permissions.index') }}"
-                           class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                            List
-                        </a>
-                    </div>
-                    <form action="{{  route('permissions.store')  }}" method="POST">
-                        @csrf
-                        <div>
-                            <label for="name" class="text-lg font-medium">Name</label>
-                            <div class="my-3">
-                                <input name="name" id="name" value="{{old('name')}}" placeholder="Enter Name" type="text" class="border-gray-300 shadow-sm w-1/2 rounded-lg text-black">
-                                @error('name')
-                                    <p class="text-red-400 font-medium">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <button class="bg-slate-700 text-sm rounded-md px-5 py-3 text-white"> Submit</button>
-                        </div>
-                    </form>
-                </div>
+@section('content')
+<div class="container mx-auto p-6">
+    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg">
+        <form action="{{ route('permissions.store') }}" method="POST" class="p-6">
+            @csrf
+            <div class="mb-4">
+                <label for="name" class="block text-gray-700 font-bold mb-2">
+                    Permission Name
+                </label>
+                <input 
+                    name="name" 
+                    id="name" 
+                    value="{{ old('name') }}" 
+                    placeholder="Enter Permission Name" 
+                    type="text" 
+                    class="w-full px-4 py-3 border rounded-lg transition duration-300 
+                        {{ $errors->has('name') 
+                            ? 'border-rose-500 text-rose-600 focus:ring-rose-500 focus:border-rose-500' 
+                            : 'border-gray-300 focus:ring-emerald-500 focus:border-emerald-500' }}"
+                >
+                @error('name')
+                    <p class="text-rose-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
-        </div>
+            
+            <button type="submit" class="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700">
+                Create Permission
+            </button>
+        </form>
     </div>
-</x-app-layout>
+</div>
+@endsection

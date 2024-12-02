@@ -1,123 +1,96 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Users') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Komponen pesan -->
-            <x-message />
+@section('title', 'Users Management')
 
-            <!-- Tombol Create -->
-            <div class="mb-4">
-                <a href="{{ route('roles.create') }}"
-                   class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                    Create New Permission
-                </a>
-            </div>
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        ID
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Name
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Email
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Roles
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Created At
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
-                                    </th>
+@section('content')
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+    <div class="container mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">
+                Users Management
+            </h2>
+            {{-- <a href="{{ route('users.create') }}" 
+               class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-full transition duration-300 ease-in-out shadow-md">
+                Create New User
+            </a> --}}
+        </div>
+
+        <!-- Komponen pesan -->
+        @include('components.message')
+
+        <div class="bg-white shadow-2xl rounded-2xl overflow-hidden">
+            <div class="p-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-collapse">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">Roles</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">Created At</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($users as $user)
+                                <tr class="hover:bg-gray-50 transition duration-200 border-b border-gray-200">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center space-x-3">
+                                            <img 
+                                                src="{{ $user->profile_image }}" 
+                                                alt="{{ $user->name }}" 
+                                                class="w-10 h-10 rounded-full object-cover"
+                                            />
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->email }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($user->roles as $role)
+                                                <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs">
+                                                    {{ $role->name }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $user->created_at->format('d M, Y') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                                        <a href="{{ route('users.edit', $user->id) }}"
+                                           class="inline-block px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition duration-300 ease-in-out">
+                                            Edit
+                                        </a>
+                                        <button onclick="deleteUser({{ $user->id }})"
+                                            class="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition duration-300 ease-in-out">
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($users as $user)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $user->id }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $user->name }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $user->email }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $user->roles->pluck('name')->implode(', ') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $user->created_at->format('d M, Y') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <!-- Tombol Edit -->
-                                            <a href="{{ route('users.edit', $user->id) }}"
-                                                class="inline-block px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-300">
-                                                 Edit
-                                             </a>
- 
-                                             <!-- Tombol Delete -->
-                                             <button onclick="deleteRole({{ $user->id }})"
-                                                 class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-300">
-                                             Delete
-                                         </button>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        No users found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
-                                            No permissions found.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                                            <!-- Pagination -->
-                    <div class="mt-4">
-                        {{ $users->links() }}
-                    </div>
-                    </div>
-                    <x-slot name="script">
-                        <script type="text/javascript">
-                            function deleteRole(id) {
-                                if (confirm('Are you sure you want to delete this permission?')) {
-                                    $.ajax({
-                                        url: `/user/${id}`, // Masukkan ID permission ke URL
-                                        type: 'DELETE',
-                                        dataType: 'json',
-                                        headers: {
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                        },
-                                        success: function(response) {
-                                            if (response.success) {
-                                                alert('Role deleted successfully!');
-                                                window.location.reload(); // Memuat ulang halaman setelah delete berhasil
-                                            } else {
-                                                alert('Failed to delete permission.');
-                                            }
-                                        },
-                                        error: function(error) {
-                                            console.error('Error:', error);
-                                            alert('An error occurred. Please try again.');
-                                        }
-                                    });
-                                }
-                            }
-                        </script>
-                    </x-slot>
- 
+                <!-- Pagination -->
+                <div class="mt-6">
+                    {{ $users->links() }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
 
- 
-    
-</x-app-layout>
+<!-- Sisa script tetap sama -->
