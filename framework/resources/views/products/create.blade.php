@@ -99,7 +99,7 @@
                         @enderror
                     </div>
 
-                    {{-- <div>
+                    <div>
                         <label for="Total quantity" class="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
                         <input 
                             name="quantity" 
@@ -112,7 +112,7 @@
                         @error('quantity')
                             <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                         @enderror
-                    </div> --}}
+                    </div>
 
                     <div class="pt-4">
                         <button 

@@ -9,15 +9,15 @@ use Spatie\Permission\Traits\HasRoles;
 
 class PermissionController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('permission:view-permissions')->only(['index']);
-        $this->middleware('permission:create-permissions')->only(['create', 'store']);
-        $this->middleware('permission:edit-permissions')->only(['edit', 'update']);
-        $this->middleware('permission:delete-permissions')->only(['destroy']);
-    }
-    // Method ini akan menampilkan halaman permission
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    //     $this->middleware('permission:view-permissions')->only(['index']);
+    //     $this->middleware('permission:create-permissions')->only(['create', 'store']);
+    //     $this->middleware('permission:edit-permissions')->only(['edit', 'update']);
+    //     $this->middleware('permission:delete-permissions')->only(['destroy']);
+    // }
+    // // Method ini akan menampilkan halaman permission
     public function index()
     {
         $permissions = Permission::orderBy('created_at', 'DESC')->paginate(10);
